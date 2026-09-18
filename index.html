@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>김하늘 자기소개</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+  <style>
+    /* --hue 숫자 하나(0~360)가 페이지 전체 색을 결정해요 */
+    :root { --hue: 265; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      perspective: 1000px;               /* 카드 3D 효과용 */
+      background: hsl(var(--hue) 45% 9%);
+      color: white;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      line-height: 1.6;
+      transition: background 0.6s;
+    }
+
+    /* ---------- 배경에서 떠다니는 빛 덩어리 ---------- */
+    .blob {
+      position: fixed;
+      z-index: -1;
+      width: 42vmax;
+      height: 42vmax;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+    }
+    .b1 { top: -10%;  left: -10%;  background: hsl(var(--hue) 90% 60%);
+          animation: drift 14s ease-in-out infinite alternate; }
+    .b2 { bottom: -15%; right: -10%; background: hsl(calc(var(--hue) + 70) 90% 60%);
+          animation: drift 18s ease-in-out infinite alternate-reverse; }
+    .b3 { width: 24vmax; height: 24vmax;                /* 마우스를 따라다니는 빛 */
+          left: var(--mx, 50%); top: var(--my, 50%);
+          transform: translate(-50%, -50%);
+          background: hsl(calc(var(--hue) + 150) 90% 65%);
+          transition: left 0.5s ease-out, top 0.5s ease-out; }
+
+    @keyframes drift {
+      to { transform: translate(12vmax, 8vmax) scale(1.2); }
+    }
+
+    /* ---------- 유리 느낌 카드 ---------- */
+    .card {
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 36px;
+      box-sizing: border-box;
+      text-align: center;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 20px;
+      display: grid;
+      place-items: center;
+      font-size: 3rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, hsl(var(--hue) 90% 65%), hsl(calc(var(--hue) + 70) 90% 60%));
+      transform: translateZ(50px);        /* 카드보다 앞으로 튀어나와 보이게 */
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Black Han Sans", sans-serif;
+      font-weight: 400;
+      font-size: clamp(2.4rem, 9vw, 3.4rem);
+      line-height: 1.1;
+      transform: translateZ(30px);
+    }
+
+    .typing {
+      min-height: 1.6em;
+      margin: 10px 0 24px;
+      font-size: 1.15rem;
+      color: hsl(calc(var(--hue) + 150) 90% 80%);
+    }
+    .cursor { animation: blink 0.8s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .about { margin: 0 0 24px; opacity: 0.85; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 0 28px;
+      padding: 0;
+      list-style: none;
+    }
+    .chips li {
+      padding: 6px 14px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .chips li:hover {
+      transform: translateY(-4px) rotate(-3deg);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    button {
+      padding: 12px 24px;
+      border: 0;
+      border-radius: 99px;
+      font: inherit;
+      font-weight: 700;
+      color: hsl(var(--hue) 45% 12%);
+      background: white;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    button:hover  { transform: scale(1.06); }
+    button:active { transform: scale(0.96); }
+    button:focus-visible { outline: 3px solid hsl(calc(var(--hue) + 150) 90% 70%); outline-offset: 3px; }
+
+    .hint { margin: 20px 0 0; font-size: 0.85rem; opacity: 0.6; }
+
+    /* 클릭하면 터지는 이모지 */
+    .pop { position: fixed; pointer-events: none; font-size: 1.6rem; }
+
+    /* 움직임 줄이기 설정을 켠 사람에게는 애니메이션을 끕니다 */
+    @media (prefers-reduced-motion: reduce) {
+      .blob, .cursor { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <main class="card" id="card">
+    <div class="avatar">🦊</div>
+    <h1>김하늘</h1>
+    <p class="typing"><span id="typed"></span><span class="cursor">|</span></p>
+
+    <p class="about">일단 해보고 나서 설명서를 읽는 편입니다. 이 페이지도 그렇게 만들었어요.</p>
+
+    <ul class="chips">
+      <li>☕ 카페 탐험</li>
+      <li>🏃 주말 러닝</li>
+      <li>🎬 다큐멘터리</li>
+      <li>🤖 AI 입문 중</li>
+    </ul>
+
+    <button id="moodBtn">분위기 바꾸기</button>
+    <p class="hint">화면 아무 데나 클릭해 보세요</p>
+  </main>
+
+  <script>
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ① 타이핑 효과: 아래 목록을 내 소개로 바꿔 보세요
+    const words = ["경영학과 3학년", "동네 카페 탐험가", "주말 러너", "바이브코딩 입문자"];
+    const typed = document.getElementById("typed");
+    let w = 0, c = 0, deleting = false;
+
+    function type() {
+      const word = words[w];
+      c += deleting ? -1 : 1;
+      typed.textContent = word.slice(0, c);
+
+      let delay = deleting ? 50 : 110;
+      if (!deleting && c === word.length) { deleting = true; delay = 1400; }
+      else if (deleting && c === 0)       { deleting = false; w = (w + 1) % words.length; delay = 300; }
+      setTimeout(type, delay);
+    }
+    type();
+
+    // ② 마우스를 따라 빛이 움직이고, 카드가 3D로 기울어요
+    const card = document.getElementById("card");
+    document.addEventListener("pointermove", (e) => {
+      document.documentElement.style.setProperty("--mx", e.clientX + "px");
+      document.documentElement.style.setProperty("--my", e.clientY + "px");
+      if (calm) return;
+      const x = e.clientX / innerWidth - 0.5;    // -0.5 ~ 0.5
+      const y = e.clientY / innerHeight - 0.5;
+      card.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 14}deg)`;
+    });
+
+    // ③ 버튼을 누르면 전체 색이 랜덤으로 바뀌어요
+    document.getElementById("moodBtn").addEventListener("click", () => {
+      const hue = Math.floor(Math.random() * 360);
+      document.documentElement.style.setProperty("--hue", hue);
+    });
+
+    // ④ 클릭한 자리에서 이모지가 터져요
+    const emojis = ["✨", "🎉", "💜", "🔥", "⭐", "🦊"];
+    document.addEventListener("click", (e) => {
+      if (calm) return;
+      for (let i = 0; i < 14; i++) {
+        const el = document.createElement("span");
+        el.className = "pop";
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = e.clientX + "px";
+        el.style.top = e.clientY + "px";
+        document.body.appendChild(el);
+
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 80 + Math.random() * 140;
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist;
+        el.animate(
+          [
+            { transform: "translate(-50%, -50%) scale(0.4)", opacity: 1 },
+            { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.2) rotate(${dx}deg)`, opacity: 0 }
+          ],
+          { duration: 900, easing: "cubic-bezier(0.2, 0.8, 0.3, 1)" }
+        ).onfinish = () => el.remove();
+      }
+    });
+  </script>
+</body>
+</html>
